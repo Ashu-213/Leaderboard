@@ -1,0 +1,32 @@
+{
+  "name": "anterix-club-leaderboard",
+  "version": "1.0.0",
+  "description": "Real-time collaborative leaderboard system using MERN stack",
+  "scripts": {
+    "setup": "cd backend && npm install && cd ../frontend && npm install",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "start:backend": "cd backend && npm start",
+    "build:frontend": "cd frontend && npm run build",
+    "preview:frontend": "cd frontend && npm run preview",
+    "build": "cd frontend && npm install && npm run build",
+    "start": "cd backend && npm install && npm start",
+    "deploy:setup": "npm run setup",
+    "deploy:build": "cd frontend && npm run build"
+  },
+  "keywords": [
+    "leaderboard",
+    "real-time",
+    "socket.io",
+    "MERN",
+    "collaborative",
+    "mongodb",
+    "react",
+    "express"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express-rate-limit": "^8.2.1"
+  }
+}

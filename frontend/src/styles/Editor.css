@@ -1,0 +1,618 @@
+/* ============================================================================
+   EDITOR PAGE - COLLABORATIVE EDITING PANEL
+   ============================================================================ */
+
+.editor-container {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--color-void) 0%, var(--color-midnight) 100%);
+  padding: var(--spacing-xl);
+  animation: fadeIn 0.5s ease;
+}
+
+/* ============================================================================
+   HEADER
+   ============================================================================ */
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  background: rgba(26, 26, 38, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(220, 20, 60, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  animation: slideInRight 0.6s ease;
+}
+
+.header-left {
+  flex: 1;
+}
+
+.editor-title {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  background: linear-gradient(135deg, var(--color-crimson-bright), var(--color-gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: var(--spacing-sm);
+}
+
+.header-stats {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: center;
+}
+
+.connection-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-family: var(--font-tech);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 50px;
+  text-transform: uppercase;
+}
+
+.connection-status.connected {
+  background: rgba(0, 255, 0, 0.1);
+  color: #00ff00;
+  border: 1px solid rgba(0, 255, 0, 0.5);
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+}
+
+.connection-status.disconnected {
+  background: rgba(255, 69, 0, 0.1);
+  color: #ff4500;
+  border: 1px solid rgba(255, 69, 0, 0.5);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.active-users {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-family: var(--font-tech);
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: rgba(36, 36, 51, 0.5);
+  border-radius: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-icon {
+  font-size: 1rem;
+}
+
+/* ============================================================================
+   ERROR MESSAGE
+   ============================================================================ */
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: rgba(255, 69, 0, 0.15);
+  border: 1px solid #ff4500;
+  border-radius: 8px;
+  color: #ff6347;
+  font-family: var(--font-tech);
+  margin-bottom: var(--spacing-lg);
+  animation: fadeInUp 0.3s ease;
+}
+
+.error-icon {
+  font-size: 1.5rem;
+}
+
+/* ============================================================================
+   ADD TEAM SECTION
+   ============================================================================ */
+
+.add-team-section {
+  margin-bottom: var(--spacing-xl);
+  animation: fadeInUp 0.6s ease 0.2s backwards;
+}
+
+.add-team-form {
+  display: flex;
+  gap: var(--spacing-md);
+  max-width: 600px;
+}
+
+.team-name-input {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: rgba(26, 26, 38, 0.6);
+  border: 2px solid rgba(220, 20, 60, 0.3);
+  border-radius: 8px;
+  color: var(--color-text-primary);
+  outline: none;
+  transition: all var(--transition-normal);
+}
+
+.team-name-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.team-name-input:focus {
+  border-color: var(--color-crimson-bright);
+  box-shadow: 0 0 15px rgba(220, 20, 60, 0.3);
+  background: rgba(26, 26, 38, 0.8);
+}
+
+.team-name-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.add-team-btn {
+  font-family: var(--font-tech);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: linear-gradient(135deg, var(--color-crimson), var(--color-violet));
+  color: var(--color-text-primary);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: 0 4px 15px rgba(220, 20, 60, 0.3);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.add-team-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(220, 20, 60, 0.5);
+  background: linear-gradient(135deg, var(--color-crimson-bright), var(--color-gold));
+}
+
+.add-team-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.add-team-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================================================
+   TEAMS TABLE
+   ============================================================================ */
+
+.editor-content {
+  animation: fadeInUp 0.6s ease 0.4s backwards;
+}
+
+.teams-table-container {
+  background: rgba(18, 18, 26, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(220, 20, 60, 0.2);
+}
+
+.teams-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Table Header */
+.teams-table thead {
+  background: linear-gradient(135deg, var(--color-crimson-dark), var(--color-obsidian));
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.teams-table th {
+  font-family: var(--font-tech);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: var(--spacing-md);
+  text-align: center;
+  color: var(--color-text-primary);
+  border-bottom: 2px solid var(--color-crimson);
+}
+
+.col-rank {
+  width: 80px;
+}
+
+.col-team {
+  width: auto;
+  text-align: left !important;
+}
+
+.col-score {
+  width: 120px;
+}
+
+.col-total {
+  width: 120px;
+}
+
+/* Actions column removed - no delete functionality
+.col-actions {
+  width: 100px;
+}
+*/
+
+/* Table Rows */
+.score-row {
+  background: rgba(26, 26, 38, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all var(--transition-fast);
+}
+
+.score-row:hover {
+  background: rgba(36, 36, 51, 0.5);
+}
+
+/* Rank highlighting */
+.score-row.rank-1 {
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), rgba(26, 26, 38, 0.3));
+  border-left: 4px solid var(--color-gold);
+}
+
+.score-row.rank-2 {
+  background: linear-gradient(90deg, rgba(192, 192, 192, 0.1), rgba(26, 26, 38, 0.3));
+  border-left: 4px solid var(--color-silver);
+}
+
+.score-row.rank-3 {
+  background: linear-gradient(90deg, rgba(205, 127, 50, 0.1), rgba(26, 26, 38, 0.3));
+  border-left: 4px solid var(--color-bronze);
+}
+
+.teams-table td {
+  padding: var(--spacing-md);
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Rank badge */
+.rank-badge {
+  font-family: var(--font-tech);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  padding: var(--spacing-xs) var(--spacing-md);
+  background: rgba(36, 36, 51, 0.6);
+  border-radius: 50px;
+  display: inline-block;
+  min-width: 50px;
+}
+
+.rank-1 .rank-badge {
+  color: var(--color-gold);
+  background: rgba(255, 215, 0, 0.15);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.rank-2 .rank-badge {
+  color: var(--color-silver);
+  background: rgba(192, 192, 192, 0.15);
+}
+
+.rank-3 .rank-badge {
+  color: var(--color-bronze);
+  background: rgba(205, 127, 50, 0.15);
+}
+
+/* Team name */
+.team-name-cell {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-align: left;
+}
+
+.rank-1 .team-name-cell {
+  color: var(--color-gold);
+}
+
+.rank-2 .team-name-cell {
+  color: var(--color-silver);
+}
+
+.rank-3 .team-name-cell {
+  color: var(--color-bronze);
+}
+
+/* Score inputs */
+.score-input {
+  font-family: var(--font-tech);
+  font-size: 1.1rem;
+  font-weight: 600;
+  width: 80px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: rgba(36, 36, 51, 0.6);
+  border: 2px solid rgba(0, 243, 255, 0.2);
+  border-radius: 6px;
+  color: var(--color-cyan);
+  text-align: center;
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.score-input:hover {
+  border-color: rgba(0, 243, 255, 0.4);
+  background: rgba(36, 36, 51, 0.8);
+}
+
+.score-input:focus,
+.score-input.editing {
+  border-color: var(--color-crimson-bright);
+  box-shadow: 0 0 15px rgba(220, 20, 60, 0.4);
+  background: rgba(26, 26, 38, 0.9);
+  color: var(--color-text-primary);
+  transform: scale(1.05);
+}
+
+/* Remove number input arrows */
+.score-input::-webkit-inner-spin-button,
+.score-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.score-input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+/* Total badge */
+.total-badge {
+  font-family: var(--font-tech);
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--color-crimson-bright);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: rgba(220, 20, 60, 0.15);
+  border-radius: 8px;
+  display: inline-block;
+  min-width: 70px;
+  border: 1px solid rgba(220, 20, 60, 0.3);
+}
+
+.rank-1 .total-badge {
+  color: var(--color-gold);
+  background: rgba(255, 215, 0, 0.2);
+  border-color: var(--color-gold);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+/* Delete button styles - commented out since delete functionality removed for security
+.delete-btn {
+  font-size: 1.2rem;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: rgba(255, 69, 0, 0.1);
+  border: 1px solid rgba(255, 69, 0, 0.3);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.delete-btn:hover {
+  background: rgba(255, 69, 0, 0.25);
+  border-color: #ff4500;
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(255, 69, 0, 0.4);
+}
+
+.delete-btn:active {
+  transform: scale(0.95);
+}
+*/
+
+/* No teams state */
+.no-teams {
+  padding: var(--spacing-2xl) !important;
+  text-align: center;
+  font-family: var(--font-tech);
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  letter-spacing: 0.1em;
+}
+
+/* ============================================================================
+   FOOTER
+   ============================================================================ */
+
+.editor-footer {
+  margin-top: var(--spacing-xl);
+  text-align: center;
+  animation: fadeIn 1s ease 0.6s backwards;
+}
+
+.footer-info {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  padding: var(--spacing-md);
+  background: rgba(26, 26, 38, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: inline-block;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 1200px) {
+  .editor-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+}
+
+@media (max-width: 768px) {
+  .editor-container {
+    padding: var(--spacing-md);
+  }
+  
+  .editor-title {
+    font-size: 1.8rem;
+  }
+  
+  .header-stats {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  
+  .add-team-form {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .team-input-container {
+    width: 100%;
+  }
+  
+  .add-team-input {
+    width: 100%;
+  }
+  
+  .add-team-btn {
+    width: 100%;
+  }
+  
+  .teams-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  }
+  
+  .teams-table {
+    min-width: 700px; /* Reduced from 800px */
+  }
+  
+  .col-score {
+    width: 80px;
+  }
+  
+  .score-input {
+    width: 60px;
+    font-size: 0.9rem;
+    padding: var(--spacing-xs);
+  }
+  
+  .teams-table th,
+  .teams-table td {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .editor-container {
+    padding: var(--spacing-sm);
+  }
+  
+  .editor-title {
+    font-size: 1.4rem;
+  }
+  
+  .connection-status,
+  .active-users {
+    font-size: 0.75rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+  
+  .add-team-input {
+    font-size: 0.9rem;
+    padding: var(--spacing-sm);
+  }
+  
+  .add-team-btn {
+    font-size: 0.85rem;
+    padding: var(--spacing-sm);
+  }
+  
+  .teams-table {
+    min-width: 600px; /* Further reduced for very small screens */
+  }
+  
+  .col-rank {
+    width: 40px;
+  }
+  
+  .col-team {
+    width: 100px;
+    min-width: 100px;
+  }
+  
+  .col-score {
+    width: 70px;
+  }
+  
+  .col-total {
+    width: 60px;
+  }
+  
+  /* Mobile styles for removed elements
+  .col-actions {
+    width: 60px;
+  }
+  */
+  
+  .teams-table th,
+  .teams-table td {
+    padding: var(--spacing-xs);
+    font-size: 0.75rem;
+  }
+  
+  .score-input {
+    width: 50px;
+    font-size: 0.8rem;
+    padding: 4px 6px; /* Increased touch target */
+    min-height: 32px; /* Minimum touch target size */
+  }
+  
+  /* Mobile delete button styles - commented out since delete functionality removed
+  .delete-btn {
+    width: 32px; 
+    height: 32px;
+    font-size: 0.8rem;
+    min-height: 32px;
+  }
+  */
+  
+  .rank-badge {
+    font-size: 0.8rem;
+    padding: 2px 6px;
+  }
+  
+  .team-name-cell {
+    font-size: 0.8rem;
+    line-height: 1.2;
+  }
+}

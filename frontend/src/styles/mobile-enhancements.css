@@ -1,0 +1,109 @@
+/* ============================================================================
+   MOBILE ENHANCEMENTS
+   Additional mobile-specific improvements for better user experience
+   ============================================================================ */
+
+/* Prevent horizontal scrolling issues */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Improve touch experience */
+@media (max-width: 768px) {
+  /* Larger touch targets for buttons */
+  button, .nav-link, .score-input {
+    min-height: 44px; /* iOS recommendation for touch targets */
+    min-width: 44px;
+  }
+  
+  /* Prevent zoom on input focus (iOS Safari) */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+  
+  /* Improve table scrolling */
+  .teams-table-container,
+  .leaderboard-content {
+    scroll-behavior: smooth;
+  }
+  
+  /* Better focus states for accessibility */
+  .score-input:focus {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+  
+  /* Optimize text selection */
+  .team-name, .score, .total-score {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  
+  .score-input {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+}
+
+/* Very small screens (older phones) */
+@media (max-width: 320px) {
+  .leaderboard-table,
+  .teams-table {
+    min-width: 320px; /* Match viewport width */
+    font-size: 0.7rem;
+  }
+  
+  .col-team {
+    width: 80px;
+    min-width: 80px;
+  }
+  
+  .col-game, .col-score {
+    width: 45px;
+    min-width: 45px;
+  }
+  
+  .team-name {
+    font-size: 0.7rem;
+    line-height: 1.1;
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .title {
+    font-size: 1.8rem;
+  }
+  
+  .leaderboard-container,
+  .editor-container {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .header-content {
+    padding: var(--spacing-sm);
+  }
+}
+
+/* Dark mode adjustments for mobile */
+@media (prefers-color-scheme: dark) and (max-width: 768px) {
+  .leaderboard-table,
+  .teams-table {
+    background: rgba(0, 0, 0, 0.8);
+  }
+  
+  .score-input {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+}
+
+/* Reduce animations on mobile for better performance */
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+  .team-row,
+  .score-row,
+  .nav-link {
+    animation: none !important;
+    transition: none !important;
+  }
+}

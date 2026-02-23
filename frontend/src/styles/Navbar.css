@@ -1,0 +1,272 @@
+/* ============================================================================
+   COSMIC NAVBAR - NAVIGATION BAR
+   ============================================================================ */
+
+.cosmic-navbar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background: linear-gradient(135deg, var(--color-void) 0%, var(--color-midnight) 50%, var(--color-obsidian) 100%);
+  border-bottom: 2px solid var(--color-crimson);
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(220, 20, 60, 0.2);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  animation: fadeIn 0.5s ease;
+}
+
+/* Cosmic background effect for navbar */
+.cosmic-navbar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.2), transparent),
+    radial-gradient(1px 1px at 60% 70%, rgba(255, 255, 255, 0.15), transparent),
+    radial-gradient(1px 1px at 80% 10%, rgba(255, 255, 255, 0.2), transparent);
+  background-size: 200px 200px, 250px 250px, 180px 180px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.navbar-container {
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: var(--spacing-md) var(--spacing-xl);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================================
+   BRAND SECTION
+   ============================================================================ */
+
+.navbar-brand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.brand-title {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-crimson-bright) 50%, var(--color-violet) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  text-transform: uppercase;
+  filter: drop-shadow(0 0 15px rgba(220, 20, 60, 0.5));
+  transition: all var(--transition-normal);
+}
+
+.brand-title:hover {
+  filter: drop-shadow(0 0 25px rgba(220, 20, 60, 0.8));
+  transform: scale(1.02);
+}
+
+.brand-subtitle {
+  font-family: var(--font-tech);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  margin-left: var(--spacing-xs);
+}
+
+/* ============================================================================
+   NAVIGATION LINKS
+   ============================================================================ */
+
+.navbar-links {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-family: var(--font-tech);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: rgba(26, 26, 38, 0.6);
+  border: 2px solid rgba(220, 20, 60, 0.3);
+  border-radius: 8px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+/* Animated background gradient */
+.nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(220, 20, 60, 0.2), transparent);
+  transition: left var(--transition-slow);
+}
+
+.nav-link:hover::before {
+  left: 100%;
+}
+
+.nav-link:hover {
+  border-color: var(--color-crimson-bright);
+  color: var(--color-text-primary);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(220, 20, 60, 0.4),
+    0 0 30px rgba(220, 20, 60, 0.2);
+  background: rgba(36, 36, 51, 0.8);
+}
+
+/* Active link styling */
+.nav-link.active {
+  background: linear-gradient(135deg, rgba(220, 20, 60, 0.3), rgba(139, 0, 255, 0.2));
+  border-color: var(--color-crimson-bright);
+  color: var(--color-crimson-bright);
+  box-shadow: 
+    0 0 20px rgba(220, 20, 60, 0.5),
+    inset 0 0 20px rgba(220, 20, 60, 0.1);
+  text-shadow: var(--glow-crimson);
+}
+
+.nav-link.active .nav-icon {
+  animation: pulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(220, 20, 60, 0.8));
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+  animation: shimmer 2s linear infinite;
+}
+
+/* Icon styling */
+.nav-icon {
+  font-size: 1.3rem;
+  transition: all var(--transition-fast);
+  filter: drop-shadow(0 0 4px rgba(220, 20, 60, 0.3));
+}
+
+.nav-link:hover .nav-icon {
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 8px rgba(220, 20, 60, 0.6));
+}
+
+.nav-text {
+  font-size: 0.95rem;
+  position: relative;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .navbar-container {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+  }
+  
+  .navbar-brand {
+    text-align: center;
+    align-items: center;
+  }
+  
+  .brand-title {
+    font-size: 1.4rem;
+    letter-spacing: 0.15em;
+  }
+  
+  .brand-subtitle {
+    font-size: 0.6rem;
+    margin-left: 0;
+  }
+  
+  .navbar-links {
+    width: 100%;
+    justify-content: center;
+    gap: var(--spacing-sm);
+  }
+  
+  .nav-link {
+    flex: 1;
+    justify-content: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.85rem;
+  }
+  
+  .nav-icon {
+    font-size: 1.1rem;
+  }
+  
+  .nav-text {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-title {
+    font-size: 1.2rem;
+  }
+  
+  .nav-link {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm);
+  }
+  
+  .nav-text {
+    font-size: 0.7rem;
+  }
+}
+
+/* ============================================================================
+   ANIMATIONS
+   ============================================================================ */
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(220, 20, 60, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(220, 20, 60, 0.6);
+  }
+}

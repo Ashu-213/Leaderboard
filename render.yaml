@@ -1,0 +1,39 @@
+services:
+  # Backend API Service
+  - type: web
+    name: leaderboard-backend
+    plan: free
+    env: node
+    region: oregon
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+
+  # Frontend Static Site
+  - type: web
+    name: leaderboard-frontend
+    plan: free
+    env: static
+    region: oregon
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+      - key: VITE_SOCKET_URL
+        sync: false
+
+databases:
+  # MongoDB database
+  - name: leaderboard-db
+    plan: free
+    databaseName: leaderboard
+    user: leaderboard_user
