@@ -3,7 +3,7 @@ import socketService from '../services/socket';
 import ScoreRow from '../components/ScoreRow';
 import '../styles/Editor.css';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 function Editor() {
   const [teams, setTeams] = useState([]);

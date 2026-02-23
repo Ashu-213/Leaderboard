@@ -10,7 +10,7 @@ function Leaderboard() {
   // Function to fetch initial teams data
   const fetchTeams = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/teams`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/teams`);
       if (response.ok) {
         const teamsData = await response.json();
         setTeams(teamsData);
