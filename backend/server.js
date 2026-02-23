@@ -4,6 +4,8 @@ import { Server } from 'socket.io';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
 import Team from './models/Team.js';
 
@@ -240,6 +242,28 @@ app.delete('/api/teams/:id', async (req, res) => {
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// ============================================================================
+// SERVE FRONTEND STATIC FILES
+// ============================================================================
+
+// Get current directory path (ES module equivalent of __dirname)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve static files from React build
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+// Handle client-side routing (SPA fallback)
+app.get('*', (req, res) => {
+  // Don't serve index.html for API routes
+  if (req.path.startsWith('/api/') || req.path.startsWith('/socket.io/')) {
+    return res.status(404).json({ error: 'API endpoint not found' });
+  }
+  
+  // Serve index.html for all other routes (React Router will handle client-side routing)
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
 });
 
 // ============================================================================
