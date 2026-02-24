@@ -36,10 +36,10 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Rate limiting middleware
+// Rate limiting middleware - RELAXED FOR HIGH CONCURRENCY
 const generalLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 100, // Limit each IP to 100 requests per windowMs
+  max: 500, // Increased from 100 to handle more concurrent users
   message: {
     error: 'Too many requests from this IP, please try again later'
   },
@@ -49,7 +49,7 @@ const generalLimiter = rateLimit({
 
 const updateLimiter = rateLimit({
   windowMs: 10 * 1000, // 10 seconds
-  max: 20, // Limit each IP to 20 updates per 10 seconds
+  max: 100, // Increased from 20 to 100 updates per 10 seconds
   message: {
     error: 'Too many score updates, please slow down'
   },
@@ -75,11 +75,22 @@ app.get('/health', (req, res) => {
 connectDB();
 
 // ============================================================================
-// DEBOUNCED BROADCASTING SETUP
+// DEBOUNCED BROADCASTING SETUP - OPTIMIZED FOR HIGH CONCURRENCY
 // ============================================================================
 
 let broadcastTimeout = null;
-const BROADCAST_DELAY = 150; // milliseconds
+const BROADCAST_DELAY = 100; // Reduced from 150ms for faster updates
+
+// Connection tracking for better performance monitoring
+let activeConnections = 0;
+let totalUpdatesPerSecond = 0;
+let updateCounter = 0;
+
+// Reset counter every second
+setInterval(() => {
+  totalUpdatesPerSecond = updateCounter;
+  updateCounter = 0;
+}, 1000);
 
 /**
  * Debounced version of broadcastLeaderboard to prevent excessive broadcasting
@@ -188,29 +199,51 @@ app.patch('/api/teams/:id', async (req, res) => {
 
     // Allowed fields for update
     const allowedFields = ['madLudo', 'treasureHunt', 'spaceRoulette', 'cosmicJump', 'spaceColosseum', 'name'];
-    const updateFields = {};
+    const scoreFields = ['madLudo', 'treasureHunt', 'spaceRoulette', 'cosmicJump', 'spaceColosseum'];
 
-    Object.keys(updates).forEach((key) => {
-      if (allowedFields.includes(key)) {
-        updateFields[key] = updates[key];
+    // Check if this is a score update or name update
+    const scoreUpdates = Object.keys(updates).filter(key => scoreFields.includes(key));
+    const nameUpdate = updates.name;
+
+    if (scoreUpdates.length === 1 && !nameUpdate) {
+      // Single score field update - use atomic method
+      const field = scoreUpdates[0];
+      const value = Number(updates[field]);
+      
+      const updatedTeam = await Team.atomicUpdateScore(id, field, value);
+      
+      // Broadcast updated leaderboard (debounced to handle rapid updates)
+      debouncedBroadcast();
+      
+      res.json(updatedTeam);
+    } else {
+      // Multiple fields or name update - use traditional method
+      const updateFields = {};
+      Object.keys(updates).forEach((key) => {
+        if (allowedFields.includes(key)) {
+          updateFields[key] = updates[key];
+        }
+      });
+
+      const team = await Team.findById(id);
+      if (!team) {
+        return res.status(404).json({ error: 'Team not found' });
       }
-    });
 
-    // Atomic update
-    const team = await Team.findById(id);
-    if (!team) {
-      return res.status(404).json({ error: 'Team not found' });
+      Object.assign(team, updateFields);
+      await team.save();
+
+      // Broadcast updated leaderboard (debounced to handle rapid updates)
+      debouncedBroadcast();
+
+      res.json(team);
     }
-
-    Object.assign(team, updateFields);
-    await team.save();
-
-    // Broadcast updated leaderboard (debounced to handle rapid updates)
-    debouncedBroadcast();
-
-    res.json(team);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    if (error.message.includes('CONFLICT')) {
+      res.status(409).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: error.message });
+    }
   }
 });
 
@@ -271,7 +304,8 @@ app.get('*', (req, res) => {
 // ============================================================================
 
 io.on('connection', (socket) => {
-  console.log(`✓ Client connected: ${socket.id} (Total: ${io.engine.clientsCount})`);
+  activeConnections++;
+  console.log(`✓ Client connected: ${socket.id} (Total: ${activeConnections}/${io.engine.clientsCount})`);
 
   // Send current leaderboard on connect
   getLeaderboard()
@@ -282,71 +316,81 @@ io.on('connection', (socket) => {
       console.error('Error sending initial leaderboard:', error);
     });
 
-  // Handle score update via socket
+  // Handle score update via socket with enhanced retry mechanism for high concurrency
   socket.on('updateScore', async (data) => {
-    try {
-      const { teamId, field, value } = data;
+    const MAX_RETRIES = 5; // Increased from 3 for better conflict resolution
+    let retryCount = 0;
+    updateCounter++; // Track update frequency
 
-      // Validate field
-      const validFields = ['madLudo', 'treasureHunt', 'spaceRoulette', 'cosmicJump', 'spaceColosseum'];
-      if (!validFields.includes(field)) {
-        socket.emit('error', { message: 'Invalid field' });
-        return;
-      }
+    const attemptUpdate = async () => {
+      try {
+        const { teamId, field, value } = data;
+        const numValue = Number(value);
 
-      // Validate value
-      const numValue = Number(value);
-      if (isNaN(numValue) || numValue < 0) {
-        socket.emit('error', { message: 'Invalid score value' });
-        return;
-      }
+        // Use atomic update method with optimistic locking
+        const updatedTeam = await Team.atomicUpdateScore(teamId, field, numValue);
 
-      // First get current team to calculate new total
-      const currentTeam = await Team.findById(teamId);
-      if (!currentTeam) {
-        socket.emit('error', { message: 'Team not found' });
-        return;
-      }
+        console.log(`✎ Score updated: ${updatedTeam.name} - ${field} = ${numValue} (attempt ${retryCount + 1}) [${totalUpdatesPerSecond} ups]`);
 
-      // Calculate new total with the updated field
-      const newTotal = 
-        (field === 'madLudo' ? numValue : currentTeam.madLudo) +
-        (field === 'treasureHunt' ? numValue : currentTeam.treasureHunt) +
-        (field === 'spaceRoulette' ? numValue : currentTeam.spaceRoulette) +
-        (field === 'cosmicJump' ? numValue : currentTeam.cosmicJump) +
-        (field === 'spaceColosseum' ? numValue : currentTeam.spaceColosseum);
+        // Broadcast to all clients (will be debounced)
+        debouncedBroadcast();
 
-      // Atomic update to prevent race conditions - update both field and total
-      const updatedTeam = await Team.findByIdAndUpdate(
-        teamId,
-        { 
-          [field]: numValue,
-          total: newTotal
-        },
-        { 
-          new: true, // Return updated document
-          runValidators: true // Run mongoose validators
+        // Notify the client of successful update
+        socket.emit('updateSuccess', { 
+          teamId,
+          field,
+          value: numValue,
+          team: updatedTeam,
+          attempts: retryCount + 1
+        });
+
+      } catch (error) {
+        console.error(`Error updating score (attempt ${retryCount + 1}):`, error.message);
+        
+        // If it's a conflict error and we have retries left, retry after a smart delay
+        if (error.message.includes('CONFLICT') && retryCount < MAX_RETRIES) {
+          retryCount++;
+          console.log(`🔄 Retrying update for ${field} (attempt ${retryCount + 1}/${MAX_RETRIES + 1})`);
+          
+          // Exponential backoff with jitter for better collision avoidance
+          const baseDelay = Math.min(50 * Math.pow(2, retryCount - 1), 500); // 50ms, 100ms, 200ms, 400ms, 500ms
+          const jitter = Math.random() * 100; // 0-100ms random jitter
+          const delay = baseDelay + jitter;
+          
+          setTimeout(attemptUpdate, delay);
+          return;
         }
-      );
-
-      if (!updatedTeam) {
-        socket.emit('error', { message: 'Team not found' });
-        return;
+        
+        // Send error to client with more details
+        socket.emit('updateError', { 
+          message: error.message,
+          teamId,
+          field,
+          retryCount,
+          serverLoad: {
+            connections: activeConnections,
+            updatesPerSecond: totalUpdatesPerSecond
+          }
+        });
       }
+    };
 
-      console.log(`✎ Score updated: ${updatedTeam.name} - ${field} = ${numValue}`);
-
-      // Broadcast to all clients (will be debounced)
-      debouncedBroadcast();
-    } catch (error) {
-      console.error('Error updating score:', error);
-      socket.emit('error', { message: error.message });
-    }
+    await attemptUpdate();
   });
 
   // Handle client disconnect
   socket.on('disconnect', () => {
-    console.log(`✗ Client disconnected: ${socket.id} (Total: ${io.engine.clientsCount})`);
+    activeConnections--;
+    console.log(`✗ Client disconnected: ${socket.id} (Total: ${activeConnections}/${io.engine.clientsCount})`);
+  });
+
+  // Add ping/pong for connection health monitoring
+  socket.on('ping', () => {
+    socket.emit('pong', { 
+      serverTime: Date.now(),
+      connections: activeConnections,
+      updatesPerSecond: totalUpdatesPerSecond
+    });
   });
 });
 

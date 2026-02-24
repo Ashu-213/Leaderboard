@@ -12,6 +12,41 @@ function Editor() {
   const [activeEditors, setActiveEditors] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [serverStats, setServerStats] = useState({ connections: 0, updatesPerSecond: 0 });
+  const [connectionQuality, setConnectionQuality] = useState('good');
+  
+  // Performance monitoring
+  useEffect(() => {
+    const pingInterval = setInterval(() => {
+      if (socketService.isConnected()) {
+        const startTime = Date.now();
+        socketService.emit('ping');
+        
+        const handlePong = (data) => {
+          const latency = Date.now() - startTime;
+          setServerStats({
+            connections: data.connections,
+            updatesPerSecond: data.updatesPerSecond
+          });
+          
+          // Determine connection quality based on latency and server load
+          if (latency > 1000 || data.updatesPerSecond > 15) {
+            setConnectionQuality('poor');
+          } else if (latency > 500 || data.updatesPerSecond > 8) {
+            setConnectionQuality('moderate');
+          } else {
+            setConnectionQuality('good');
+          }
+          
+          socketService.off('pong', handlePong);
+        };
+        
+        socketService.on('pong', handlePong);
+      }
+    }, 5000); // Ping every 5 seconds
+    
+    return () => clearInterval(pingInterval);
+  }, []);
 
   // Function to fetch initial teams data
   const fetchTeams = async () => {
@@ -53,10 +88,27 @@ function Editor() {
       setTimeout(() => setError(''), 3000);
     };
 
+    const handleUpdateError = (errorData) => {
+      // Enhanced error handling for high-concurrency scenarios
+      if (errorData.message.includes('CONFLICT')) {
+        if (errorData.retryCount >= 5) {
+          setError('⚡ High traffic detected! Some updates may take longer...');
+        } else {
+          setError('⚡ Multiple editors active! Changes syncing...');
+        }
+      } else if (errorData.serverLoad?.updatesPerSecond > 10) {
+        setError('🔥 Server busy! Please wait a moment...');
+      } else {
+        setError(`Update failed: ${errorData.message}`);
+      }
+      setTimeout(() => setError(''), 5000); // Longer timeout for high-load messages
+    };
+
     socket.on('connect', handleConnect);
     socket.on('disconnect', handleDisconnect);
     socket.on('leaderboardUpdated', handleLeaderboardUpdate);
     socket.on('error', handleError);
+    socket.on('updateError', handleUpdateError);
 
     // Handle page visibility changes
     const handleVisibilityChange = () => {
@@ -67,8 +119,8 @@ function Editor() {
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // Track connected clients (you can enhance this with custom events)
-    setActiveEditors(1); // Start with current user
+    // Track connected clients with enhanced monitoring
+    setActiveEditors(serverStats.connections || 1);
 
     // Cleanup
     return () => {
@@ -76,6 +128,7 @@ function Editor() {
       socket.off('disconnect', handleDisconnect);
       socket.off('leaderboardUpdated', handleLeaderboardUpdate);
       socket.off('error', handleError);
+      socket.off('updateError', handleUpdateError);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
@@ -150,8 +203,14 @@ function Editor() {
             </div>
             <div className="active-users">
               <span className="user-icon">👥</span>
-              {activeEditors} editor{activeEditors !== 1 ? 's' : ''} online
+              {serverStats.connections || activeEditors} editor{activeEditors !== 1 ? 's' : ''} online
             </div>
+            {serverStats.updatesPerSecond > 0 && (
+              <div className={`server-load ${connectionQuality}`}>
+                <span className="load-icon">⚡</span>
+                {serverStats.updatesPerSecond} ups
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -219,6 +278,9 @@ function Editor() {
       <div className="editor-footer">
         <div className="footer-info">
           💡 Changes are saved automatically and broadcast to all connected displays
+          {serverStats.connections > 10 && (
+            <span className="high-load-notice"> • High traffic mode: Updates may take a few seconds</span>
+          )}
         </div>
       </div>
     </div>

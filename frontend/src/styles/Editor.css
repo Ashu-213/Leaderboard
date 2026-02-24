@@ -97,6 +97,42 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.server-load {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-family: var(--font-tech);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 50px;
+  text-transform: uppercase;
+}
+
+.server-load.good {
+  background: rgba(0, 255, 0, 0.1);
+  color: #00ff00;
+  border: 1px solid rgba(0, 255, 0, 0.3);
+}
+
+.server-load.moderate {
+  background: rgba(255, 193, 7, 0.1);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.server-load.poor {
+  background: rgba(255, 69, 0, 0.1);
+  color: #ff4500;
+  border: 1px solid rgba(255, 69, 0, 0.3);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.load-icon {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
 .user-icon {
   font-size: 1rem;
 }
@@ -387,6 +423,87 @@
   -moz-appearance: textfield;
 }
 
+/* Score input container for status indicators */
+.score-input-container {
+  position: relative;
+  display: inline-block;
+}
+
+.update-status {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  animation: statusPulse 0.3s ease;
+  z-index: 10;
+}
+
+.update-status.pending {
+  background: rgba(255, 193, 7, 0.9);
+  color: #fff;
+  animation: spin 1s linear infinite;
+}
+
+.update-status.success {
+  background: rgba(40, 167, 69, 0.9);
+  color: #fff;
+  animation: successPop 0.5s ease;
+}
+
+.update-status.error {
+  background: rgba(220, 53, 69, 0.9);
+  color: #fff;
+  animation: errorShake 0.5s ease;
+}
+
+/* Score input states */
+.score-input.pending {
+  border-color: rgba(255, 193, 7, 0.6);
+  background: rgba(255, 193, 7, 0.1);
+}
+
+.score-input.success {
+  border-color: rgba(40, 167, 69, 0.6);
+  background: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+}
+
+.score-input.error {
+  border-color: rgba(220, 53, 69, 0.6);
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+/* Animations */
+@keyframes statusPulse {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes successPop {
+  0% { transform: scale(0.5); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+
 /* Total badge */
 .total-badge {
   font-family: var(--font-tech);
@@ -460,6 +577,12 @@
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   display: inline-block;
+}
+
+.high-load-notice {
+  color: var(--color-gold);
+  font-weight: 600;
+  animation: pulse 2s ease-in-out infinite;
 }
 
 /* ============================================================================
