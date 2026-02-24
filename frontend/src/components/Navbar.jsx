@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import '../styles/Navbar.css';
-import logo from '../assets/logo-navbar.png';
+import logo from '../assets/noname.png';
 
 function Navbar() {
   return (
@@ -8,8 +8,6 @@ function Navbar() {
       <div className="navbar-container">
         <div className="navbar-brand">
           <img src={logo} alt="Logo" className="navbar-logo" />
-          <h1 className="brand-title">ANTERIX CLUB</h1>
-          {/* <div className="brand-subtitle">Live Championship System</div> */}
         </div>
         
         <div className="navbar-links">
