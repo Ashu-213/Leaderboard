@@ -50,8 +50,21 @@
 
 .navbar-brand {
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.navbar-logo {
+  height: 40px;
+  width: auto;
+  filter: drop-shadow(0 0 10px rgba(220, 20, 60, 0.3));
+  transition: all var(--transition-normal);
+}
+
+.navbar-logo:hover {
+  filter: drop-shadow(0 0 20px rgba(220, 20, 60, 0.6));
+  transform: scale(1.05);
 }
 
 .brand-title {
