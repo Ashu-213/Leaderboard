@@ -13,17 +13,17 @@ const teamSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
+    cosmicJump: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
     treasureHunt: {
       type: Number,
       default: 0,
       min: 0,
     },
     spaceRoulette: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-    cosmicJump: {
       type: Number,
       default: 0,
       min: 0,
@@ -56,15 +56,15 @@ teamSchema.index({ _id: 1, version: 1 });
 // Pre-save hook to calculate total ONLY when explicitly saving (not for updates)
 teamSchema.pre('save', function (next) {
   // Only calculate total if this is a new document or if individual fields were modified
-  if (this.isNew || this.isModified(['madLudo', 'treasureHunt', 'spaceRoulette', 'cosmicJump', 'spaceColosseum'])) {
-    this.total = this.madLudo + this.treasureHunt + this.spaceRoulette + this.cosmicJump + this.spaceColosseum;
+  if (this.isNew || this.isModified(['madLudo', 'cosmicJump', 'treasureHunt', 'spaceRoulette', 'spaceColosseum'])) {
+    this.total = this.madLudo + this.cosmicJump + this.treasureHunt + this.spaceRoulette + this.spaceColosseum;
   }
   next();
 });
 
 // Static method for atomic score updates
 teamSchema.statics.atomicUpdateScore = async function(teamId, field, newValue, currentVersion) {
-  const validFields = ['madLudo', 'treasureHunt', 'spaceRoulette', 'cosmicJump', 'spaceColosseum'];
+  const validFields = ['madLudo', 'cosmicJump', 'treasureHunt', 'spaceRoulette', 'spaceColosseum'];
   
   if (!validFields.includes(field)) {
     throw new Error('Invalid field for update');

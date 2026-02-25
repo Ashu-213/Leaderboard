@@ -4,9 +4,9 @@ import socketService from '../services/socket';
 function ScoreRow({ team }) {
   const [scores, setScores] = useState({
     madLudo: team.madLudo,
+    cosmicJump: team.cosmicJump,
     treasureHunt: team.treasureHunt,
     spaceRoulette: team.spaceRoulette,
-    cosmicJump: team.cosmicJump,
     spaceColosseum: team.spaceColosseum,
   });
   
@@ -19,9 +19,9 @@ function ScoreRow({ team }) {
   useEffect(() => {
     setScores({
       madLudo: team.madLudo,
+      cosmicJump: team.cosmicJump,
       treasureHunt: team.treasureHunt,
       spaceRoulette: team.spaceRoulette,
-      cosmicJump: team.cosmicJump,
       spaceColosseum: team.spaceColosseum,
     });
     
@@ -192,7 +192,7 @@ function ScoreRow({ team }) {
       <td className="col-team">
         <div className="team-name-cell">{team.name}</div>
       </td>
-      {['madLudo', 'treasureHunt', 'spaceRoulette', 'cosmicJump', 'spaceColosseum'].map((field) => (
+      {['madLudo', 'cosmicJump', 'treasureHunt', 'spaceRoulette', 'spaceColosseum'].map((field) => (
         <td key={field} className="col-score">
           <div className="score-input-container">
             <input

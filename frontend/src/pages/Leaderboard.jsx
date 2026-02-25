@@ -99,9 +99,9 @@ function Leaderboard() {
               <th className="col-rank">RANK</th>
               <th className="col-team">TEAM</th>
               <th className="col-game">MAD LUDO</th>
+              <th className="col-game">COSMIC JUMP</th>
               <th className="col-game">TREASURE HUNT</th>
               <th className="col-game">SPACE ROULETTE</th>
-              <th className="col-game">COSMIC JUMP</th>
               <th className="col-game">SPACE COLOSSEUM</th>
               <th className="col-total">TOTAL</th>
             </tr>
@@ -133,13 +133,13 @@ function Leaderboard() {
                     <div className="score">{team.madLudo}</div>
                   </td>
                   <td className="col-game">
+                    <div className="score">{team.cosmicJump}</div>
+                  </td>
+                  <td className="col-game">
                     <div className="score">{team.treasureHunt}</div>
                   </td>
                   <td className="col-game">
                     <div className="score">{team.spaceRoulette}</div>
-                  </td>
-                  <td className="col-game">
-                    <div className="score">{team.cosmicJump}</div>
                   </td>
                   <td className="col-game">
                     <div className="score">{team.spaceColosseum}</div>

@@ -198,8 +198,8 @@ app.patch('/api/teams/:id', async (req, res) => {
     const updates = req.body;
 
     // Allowed fields for update
-    const allowedFields = ['madLudo', 'treasureHunt', 'spaceRoulette', 'cosmicJump', 'spaceColosseum', 'name'];
-    const scoreFields = ['madLudo', 'treasureHunt', 'spaceRoulette', 'cosmicJump', 'spaceColosseum'];
+    const allowedFields = ['madLudo', 'cosmicJump', 'treasureHunt', 'spaceRoulette', 'spaceColosseum', 'name'];
+    const scoreFields = ['madLudo', 'cosmicJump', 'treasureHunt', 'spaceRoulette', 'spaceColosseum'];
 
     // Check if this is a score update or name update
     const scoreUpdates = Object.keys(updates).filter(key => scoreFields.includes(key));

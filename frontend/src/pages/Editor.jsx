@@ -247,9 +247,9 @@ function Editor() {
                 <th className="col-rank">Rank</th>
                 <th className="col-team">Team Name</th>
                 <th className="col-score">Mad Ludo</th>
+                <th className="col-score">Cosmic Jump</th>
                 <th className="col-score">Treasure Hunt</th>
                 <th className="col-score">Space Roulette</th>
-                <th className="col-score">Cosmic Jump</th>
                 <th className="col-score">Space Colosseum</th>
                 <th className="col-total">Total</th>
                 {/* Actions column removed - no delete functionality */}
