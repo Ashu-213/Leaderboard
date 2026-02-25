@@ -83,7 +83,7 @@ function Leaderboard() {
     <div className="leaderboard-container">
       <div className="leaderboard-header">
         <div className="header-content">
-          <h1 className="title">Pandora's Leaderboard</h1>
+          <h1 className="title">Pandora's House</h1>
           {/* <div className="subtitle">Live Championship Leaderboard</div> */}
           <div className={`status-indicator ${connected ? 'connected' : 'disconnected'}`}>
             <span className="status-dot"></span>
